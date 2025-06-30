@@ -25,10 +25,17 @@ def create_app():
     CORS(app)
 
     # Import models before migration to register them
-    from app import models,routes  # ✅ Correct position here
+    from app import models  # ✅ Correct position here
 
     # Register blueprints
     from app.routes.auth_routes import auth_bp
+    from app.routes.stay_routes import stay_bp
+    from app.routes.booking_routes import booking_bp
+    from app.routes.review_routes import review_bp
+
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(stay_bp)  # stay_bp already has /stays prefix
+    app.register_blueprint(booking_bp, url_prefix='/bookings')
+    app.register_blueprint(review_bp, url_prefix='/reviews')
 
     return app

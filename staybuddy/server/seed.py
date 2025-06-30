@@ -1,11 +1,6 @@
 # server/seed.py
 
 from app import create_app, db
-from app.models import User
-from app.models import Stay
-from app.models import Booking
-from app.models import Review
-
 from datetime import date
 
 app = create_app()
@@ -13,9 +8,14 @@ app = create_app()
 with app.app_context():
     print("🌱 Seeding database...")
 
+    # Import models after app context is established
+    from app.models import User, Stay, Booking, Review
+
     # Drop and recreate all tables
     db.drop_all()
     db.create_all()
+
+    print("✅ Database tables created!")
 
     # --------------------
     # Create Users
@@ -31,8 +31,8 @@ with app.app_context():
     # --------------------
     # Create Stays
     # --------------------
-    stay1 = Stay(title="Ocean View Apartment", location="Mombasa", price=3500, description="Enjoy a sea breeze with a coastal view.", owner_id=user1.id)
-    stay2 = Stay(title="Nairobi CBD Loft", location="Nairobi", price=2800, description="Perfect for business trips!", owner_id=user2.id)
+    stay1 = Stay(title="Ocean View Apartment", location="Mombasa", price=3500, description="Enjoy a sea breeze with a coastal view.", user_id=user1.id)
+    stay2 = Stay(title="Nairobi CBD Loft", location="Nairobi", price=2800, description="Perfect for business trips!", user_id=user2.id)
 
     db.session.add_all([stay1, stay2])
     db.session.commit()
