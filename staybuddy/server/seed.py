@@ -31,8 +31,8 @@ with app.app_context():
     # --------------------
     # Create Stays
     # --------------------
-    stay1 = Stay(title="Ocean View Apartment", location="Mombasa", price=3500, description="Enjoy a sea breeze with a coastal view.", owner_id=user1.id)
-    stay2 = Stay(title="Nairobi CBD Loft", location="Nairobi", price=2800, description="Perfect for business trips!", owner_id=user2.id)
+    stay1 = Stay(title="Ocean View Apartment", location="Mombasa", price=3500, description="Enjoy a sea breeze with a coastal view.", user_id=user1.id)
+    stay2 = Stay(title="Nairobi CBD Loft", location="Nairobi", price=2800, description="Perfect for business trips!", user_id=user2.id)
 
     db.session.add_all([stay1, stay2])
     db.session.commit()
