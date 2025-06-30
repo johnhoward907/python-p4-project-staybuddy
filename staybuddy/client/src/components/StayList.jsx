@@ -23,6 +23,11 @@ const StayList = () => {
   return (
     <div>
       <h2>All Stays</h2>
+      {error && (
+        <div style={{ color: "red", padding: "10px", margin: "10px 0" }}>
+          {error}
+        </div>
+      )}
       <ul>
         {stays.map((stay) => (
           <li key={stay.id}>
