@@ -122,13 +122,13 @@ function NewStayForm() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 className="form-input"
-                placeholder="e.g., 150"
-                step="1"
-                min="1"
+                placeholder="e.g., 12000"
+                step="50"
+                min="500"
                 required
               />
               <small className="form-help">
-                Set a competitive price for your area
+                Set a competitive price in Kenyan Shillings for your area
               </small>
             </div>
 
