@@ -70,8 +70,13 @@ const SignupForm = () => {
                 });
 
                 if (!response.ok) {
-                  const errorData = await response.json();
-                  setErrors({ email: errorData.error || "Signup failed" });
+                  try {
+                    const errorData = await response.json();
+                    setErrors({ email: errorData.error || "Signup failed" });
+                  } catch (parseError) {
+                    console.error("Error parsing response:", parseError);
+                    setErrors({ email: "Signup failed. Please try again." });
+                  }
                   return;
                 }
 
