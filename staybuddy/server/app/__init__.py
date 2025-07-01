@@ -32,10 +32,12 @@ def create_app():
     from app.routes.stay_routes import stay_bp
     from app.routes.booking_routes import booking_bp
     from app.routes.review_routes import review_bp
+    from app.routes.favorite_routes import favorite_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(stay_bp)  # stay_bp already has /stays prefix
     app.register_blueprint(booking_bp, url_prefix='/bookings')
     app.register_blueprint(review_bp, url_prefix='/reviews')
+    app.register_blueprint(favorite_bp, url_prefix='/favorites')
 
     return app
