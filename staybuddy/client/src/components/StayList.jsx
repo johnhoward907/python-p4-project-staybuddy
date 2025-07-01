@@ -142,10 +142,38 @@ const StayList = () => {
                 to={`/stays/${stay.id}`}
                 className="stay-card"
               >
-                <div className="stay-image">🏠</div>
+                <div className="stay-image">
+                  {stay.photos && stay.photos.length > 0 ? (
+                    <img
+                      src={stay.photos[0].url}
+                      alt={stay.title}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="stay-image-fallback"
+                    style={{
+                      display:
+                        stay.photos && stay.photos.length > 0 ? "none" : "flex",
+                    }}
+                  >
+                    🏠
+                  </div>
+                  {stay.photos && stay.photos.length > 1 && (
+                    <div className="photo-count-badge">
+                      +{stay.photos.length - 1}
+                    </div>
+                  )}
+                </div>
                 <div className="stay-content">
                   <h3 className="stay-title">{stay.title}</h3>
                   <div className="stay-location">📍 {stay.location}</div>
+                  {stay.description && (
+                    <div className="stay-description">{stay.description}</div>
+                  )}
                   <div className="stay-price">
                     ${stay.price}
                     <span className="stay-price-unit">/night</span>
