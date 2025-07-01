@@ -64,12 +64,19 @@ const LoginForm = () => {
                 });
 
                 if (!response.ok) {
-                  const errorData = await response.json();
-                  setErrors({ email: errorData.error || "Login failed" });
+                  try {
+                    const errorText = await response.text();
+                    const errorData = JSON.parse(errorText);
+                    setErrors({ email: errorData.error || "Login failed" });
+                  } catch (parseError) {
+                    console.error("Error parsing response:", parseError);
+                    setErrors({ email: "Login failed. Please try again." });
+                  }
                   return;
                 }
 
-                const data = await response.json();
+                const responseText = await response.text();
+                const data = JSON.parse(responseText);
                 localStorage.setItem("token", data.token);
                 if (login) login(data.user);
                 navigate("/");
