@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../UserContext.jsx";
 
 function NavBar() {
   const { user, logout } = useContext(UserContext);
@@ -21,6 +21,10 @@ function NavBar() {
           🏠 StayBuddy
         </Link>
 
+        {user && (
+          <div className="navbar-welcome">Welcome, {user.username}!</div>
+        )}
+
         <ul className="navbar-nav">
           <li>
             <Link
@@ -39,6 +43,14 @@ function NavBar() {
                   className={`navbar-link ${isActive("/bookings") ? "active" : ""}`}
                 >
                   My Bookings
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/favorites"
+                  className={`navbar-link ${isActive("/favorites") ? "active" : ""}`}
+                >
+                  ❤️ Favorites
                 </Link>
               </li>
               <li>

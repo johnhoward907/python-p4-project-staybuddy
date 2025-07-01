@@ -16,7 +16,7 @@ const BookingForm = () => {
       })}
       onSubmit={async (values, { setSubmitting, setErrors }) => {
         try {
-          const res = await fetch("http://localhost:5000/bookings", {
+          const res = await fetch("/bookings", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
