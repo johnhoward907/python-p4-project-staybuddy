@@ -221,3 +221,13 @@ select:focus {
   border-radius: 8px;
   margin: 16px 0;
 }
+
+.demo-notice {
+  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+  color: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin: 16px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: none;
+}
