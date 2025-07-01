@@ -180,6 +180,146 @@ app.get("/bookings", (req, res) => {
   ]);
 });
 
+// Mock reviews database
+const reviews = [
+  {
+    id: 1,
+    stay_id: 1,
+    user_id: 1,
+    rating: 5,
+    comment:
+      "Amazing place! The beach view was incredible and the host was very responsive.",
+    created_at: new Date().toISOString(),
+    author: { id: 1, username: "demo", email: "demo@example.com" },
+  },
+  {
+    id: 2,
+    stay_id: 1,
+    user_id: 2,
+    rating: 4,
+    comment:
+      "Great location and clean facilities. Would definitely stay again!",
+    created_at: new Date().toISOString(),
+    author: { id: 2, username: "traveler", email: "traveler@example.com" },
+  },
+];
+
+// Mock favorites database
+const favorites = [];
+
+// Reviews endpoints
+app.get("/reviews/stay/:stayId", (req, res) => {
+  const stayId = parseInt(req.params.stayId);
+  const stayReviews = reviews.filter((r) => r.stay_id === stayId);
+  res.json(stayReviews);
+});
+
+app.post("/reviews", (req, res) => {
+  const { stay_id, rating, comment } = req.body;
+
+  if (!stay_id || !rating || !comment) {
+    return res
+      .status(400)
+      .json({ error: "Stay ID, rating, and comment are required" });
+  }
+
+  const newReview = {
+    id: reviews.length + 1,
+    stay_id: parseInt(stay_id),
+    user_id: 1, // Mock user ID
+    rating: parseInt(rating),
+    comment,
+    created_at: new Date().toISOString(),
+    author: { id: 1, username: "demo", email: "demo@example.com" },
+  };
+
+  reviews.push(newReview);
+  console.log(`New review created for stay ${stay_id}: ${rating} stars`);
+
+  res.status(201).json(newReview);
+});
+
+// Favorites endpoints
+app.get("/favorites", (req, res) => {
+  // Return favorites with stay details
+  const userFavorites = favorites.map((fav) => ({
+    ...fav,
+    stay: stays.find((s) => s.id === fav.stay_id),
+  }));
+  res.json(userFavorites);
+});
+
+app.post("/favorites", (req, res) => {
+  const { stay_id, notes } = req.body;
+
+  if (!stay_id) {
+    return res.status(400).json({ error: "Stay ID is required" });
+  }
+
+  // Check if already favorited
+  const existing = favorites.find(
+    (f) => f.stay_id === parseInt(stay_id) && f.user_id === 1,
+  );
+  if (existing) {
+    return res.status(400).json({ error: "Stay already in favorites" });
+  }
+
+  const newFavorite = {
+    id: favorites.length + 1,
+    user_id: 1, // Mock user ID
+    stay_id: parseInt(stay_id),
+    notes: notes || "",
+    date_added: new Date().toISOString(),
+  };
+
+  favorites.push(newFavorite);
+  console.log(`Stay ${stay_id} added to favorites`);
+
+  res.status(201).json(newFavorite);
+});
+
+app.get("/favorites/check/:stayId", (req, res) => {
+  const stayId = parseInt(req.params.stayId);
+  const favorite = favorites.find(
+    (f) => f.stay_id === stayId && f.user_id === 1,
+  );
+
+  res.json({
+    is_favorited: !!favorite,
+    favorite_id: favorite?.id || null,
+    notes: favorite?.notes || null,
+  });
+});
+
+app.patch("/favorites/:favoriteId", (req, res) => {
+  const favoriteId = parseInt(req.params.favoriteId);
+  const { notes } = req.body;
+
+  const favorite = favorites.find((f) => f.id === favoriteId);
+  if (!favorite) {
+    return res.status(404).json({ error: "Favorite not found" });
+  }
+
+  favorite.notes = notes;
+  console.log(`Favorite ${favoriteId} notes updated`);
+
+  res.json(favorite);
+});
+
+app.delete("/favorites/:favoriteId", (req, res) => {
+  const favoriteId = parseInt(req.params.favoriteId);
+  const index = favorites.findIndex((f) => f.id === favoriteId);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Favorite not found" });
+  }
+
+  favorites.splice(index, 1);
+  console.log(`Favorite ${favoriteId} removed`);
+
+  res.json({ message: "Favorite removed successfully" });
+});
+
 // Health check
 app.get("/", (req, res) => {
   res.json({ message: "Mock StayBuddy Backend Server Running", status: "ok" });
