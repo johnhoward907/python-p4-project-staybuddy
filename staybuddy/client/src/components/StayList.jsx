@@ -21,22 +21,22 @@ const StayList = () => {
           {
             id: 1,
             title: "Cozy Mountain Cabin",
-            location: "Aspen, Colorado",
-            price: 150,
+            location: "Mount Kenya, Nyeri",
+            price: 12000,
             description: "Perfect getaway in the mountains",
           },
           {
             id: 2,
             title: "Modern City Apartment",
-            location: "New York, NY",
-            price: 200,
+            location: "Westlands, Nairobi",
+            price: 18000,
             description: "Stylish apartment in the heart of the city",
           },
           {
             id: 3,
             title: "Beachfront Villa",
-            location: "Malibu, California",
-            price: 350,
+            location: "Diani Beach, Mombasa",
+            price: 25000,
             description: "Luxury villa with ocean views",
           },
         ];
@@ -142,12 +142,40 @@ const StayList = () => {
                 to={`/stays/${stay.id}`}
                 className="stay-card"
               >
-                <div className="stay-image">🏠</div>
+                <div className="stay-image">
+                  {stay.photos && stay.photos.length > 0 ? (
+                    <img
+                      src={stay.photos[0].url}
+                      alt={stay.title}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="stay-image-fallback"
+                    style={{
+                      display:
+                        stay.photos && stay.photos.length > 0 ? "none" : "flex",
+                    }}
+                  >
+                    🏠
+                  </div>
+                  {stay.photos && stay.photos.length > 1 && (
+                    <div className="photo-count-badge">
+                      +{stay.photos.length - 1}
+                    </div>
+                  )}
+                </div>
                 <div className="stay-content">
                   <h3 className="stay-title">{stay.title}</h3>
                   <div className="stay-location">📍 {stay.location}</div>
+                  {stay.description && (
+                    <div className="stay-description">{stay.description}</div>
+                  )}
                   <div className="stay-price">
-                    ${stay.price}
+                    KSH {stay.price}
                     <span className="stay-price-unit">/night</span>
                   </div>
                 </div>

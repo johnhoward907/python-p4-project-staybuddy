@@ -1,18 +1,44 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useContext } from "react";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../UserContext.jsx";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useContext(UserContext);
+
+  // Check if we came from the auth prompt
+  const showBackButton =
+    location.state?.from === "auth-prompt" ||
+    !document.referrer.includes("/login");
 
   return (
     <div className="main-content">
       <div className="container">
         <div className="form-container">
+          {showBackButton && (
+            <button
+              onClick={() => navigate("/")}
+              className="back-button"
+              type="button"
+            >
+              ← Back to Welcome
+            </button>
+          )}
           <h2 className="form-title">Welcome Back</h2>
+          <div className="demo-credentials">
+            <p>
+              <strong>🧪 Demo Credentials:</strong>
+            </p>
+            <p>
+              Email: <code>demo@example.com</code>
+            </p>
+            <p>
+              Password: <code>password123</code>
+            </p>
+          </div>
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={Yup.object({
@@ -24,28 +50,38 @@ const LoginForm = () => {
                 .required("Password is required"),
             })}
             onSubmit={async (values, { setSubmitting, setErrors }) => {
+              // Prevent duplicate submissions
+              if (setSubmitting) setSubmitting(true);
+
               try {
-                const res = await fetch("/auth/login", {
+                // Clear any previous errors
+                setErrors({});
+
+                const response = await fetch("/auth/login", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(values),
                 });
-                const data = await res.json();
-                if (res.ok) {
-                  localStorage.setItem("token", data.token);
-                  if (login) login(data.user);
-                  navigate("/");
-                } else {
-                  setErrors({ email: data.error || "Login failed" });
+
+                if (!response.ok) {
+                  const errorData = await response.json();
+                  setErrors({ email: errorData.error || "Login failed" });
+                  return;
                 }
+
+                const data = await response.json();
+                localStorage.setItem("token", data.token);
+                if (login) login(data.user);
+                navigate("/");
               } catch (err) {
                 console.error("Network error:", err);
                 setErrors({
                   email:
-                    "Server unavailable. Please check if the backend server is running.",
+                    "Network error. Please check your connection and try again.",
                 });
+              } finally {
+                if (setSubmitting) setSubmitting(false);
               }
-              setSubmitting(false);
             }}
           >
             {({ isSubmitting }) => (
