@@ -175,7 +175,7 @@ const StayList = () => {
                     <div className="stay-description">{stay.description}</div>
                   )}
                   <div className="stay-price">
-                    ${stay.price}
+                    KSH {stay.price}
                     <span className="stay-price-unit">/night</span>
                   </div>
                 </div>

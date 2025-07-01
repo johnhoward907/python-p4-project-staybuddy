@@ -114,7 +114,7 @@ function NewStayForm() {
 
             <div className="form-group">
               <label className="form-label" htmlFor="price">
-                Price per Night (USD) *
+                Price per Night (KSH) *
               </label>
               <input
                 id="price"

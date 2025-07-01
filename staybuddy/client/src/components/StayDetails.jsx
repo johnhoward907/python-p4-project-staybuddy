@@ -128,7 +128,7 @@ const StayDetails = () => {
         <div className="stay-details">
           <div className="stay-info">
             <div className="stay-price-section">
-              <span className="stay-price-large">${stay.price}</span>
+              <span className="stay-price-large">KSH {stay.price}</span>
               <span className="stay-price-unit"> per night</span>
             </div>
 
