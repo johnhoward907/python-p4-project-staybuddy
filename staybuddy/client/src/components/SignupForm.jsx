@@ -29,17 +29,31 @@ const SignupForm = () => {
           )}
           <h2 className="form-title">Join StayBuddy</h2>
           <Formik
-            initialValues={{ username: "", email: "", password: "" }}
+            initialValues={{ username: "", email: "", password: "", phone: "" }}
             validationSchema={Yup.object({
               username: Yup.string()
                 .min(3, "Username must be at least 3 characters")
+                .matches(
+                  /^[a-zA-Z0-9_]+$/,
+                  "Username can only contain letters, numbers, and underscores",
+                )
                 .required("Username is required"),
               email: Yup.string()
                 .email("Invalid email address")
                 .required("Email is required"),
               password: Yup.string()
                 .min(6, "Password must be at least 6 characters")
+                .matches(
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                  "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+                )
                 .required("Password is required"),
+              phone: Yup.string()
+                .matches(
+                  /^(\+254|0)[7][0-9]{8}$/,
+                  "Please enter a valid Kenyan phone number (e.g., +254712345678 or 0712345678)",
+                )
+                .required("Phone number is required"),
             })}
             onSubmit={async (values, { setSubmitting, setErrors }) => {
               // Prevent duplicate submissions
@@ -122,8 +136,31 @@ const SignupForm = () => {
                     className="form-input"
                     placeholder="Create a password"
                   />
+                  <small className="form-help">
+                    Must contain uppercase, lowercase, and number
+                  </small>
                   <ErrorMessage
                     name="password"
+                    component="div"
+                    className="error"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="phone">
+                    Phone Number
+                  </label>
+                  <Field
+                    name="phone"
+                    type="tel"
+                    className="form-input"
+                    placeholder="+254712345678 or 0712345678"
+                  />
+                  <small className="form-help">
+                    Kenyan phone number for account verification
+                  </small>
+                  <ErrorMessage
+                    name="phone"
                     component="div"
                     className="error"
                   />
