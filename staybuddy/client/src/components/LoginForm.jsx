@@ -2,7 +2,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
 import { useContext } from "react";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../UserContext.jsx";
 
 const LoginForm = () => {
   const navigate = useNavigate();
