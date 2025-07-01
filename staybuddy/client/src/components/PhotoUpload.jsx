@@ -75,8 +75,7 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
     }
   };
 
-  const handleUrlAdd = (e) => {
-    e.preventDefault();
+  const handleUrlAdd = () => {
     if (!urlInput.trim() || photos.length >= maxPhotos) return;
 
     const newPhoto = {
@@ -88,6 +87,13 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
 
     onPhotosChange([...photos, newPhoto]);
     setUrlInput("");
+  };
+
+  const handleUrlKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleUrlAdd();
+    }
   };
 
   const handleDrop = (e) => {
@@ -125,7 +131,7 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
       </h3>
 
       {/* URL Input */}
-      <form onSubmit={handleUrlAdd} className="url-input-form">
+      <div className="url-input-form">
         <div className="form-group">
           <label className="form-label">Add image from URL:</label>
           <div className="url-input-wrapper">
@@ -133,12 +139,14 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
               type="url"
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
+              onKeyPress={handleUrlKeyPress}
               placeholder="https://example.com/image.jpg"
               className="form-input url-input"
               disabled={photos.length >= maxPhotos}
             />
             <button
-              type="submit"
+              type="button"
+              onClick={handleUrlAdd}
               className="btn btn-secondary"
               disabled={!urlInput.trim() || photos.length >= maxPhotos}
             >
@@ -146,7 +154,7 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
             </button>
           </div>
         </div>
-      </form>
+      </div>
 
       {/* File Upload Drop Zone */}
       <div
