@@ -137,7 +137,14 @@ app.get("/stays/:id", (req, res) => {
 });
 
 app.post("/stays", (req, res) => {
-  const { title, description, location, price, photos = [] } = req.body;
+  const {
+    title,
+    description,
+    location,
+    price,
+    contact_phone,
+    photos = [],
+  } = req.body;
 
   if (!title || !location || !price) {
     return res
@@ -151,6 +158,7 @@ app.post("/stays", (req, res) => {
     description: description || "",
     location,
     price: parseFloat(price),
+    contact_phone: contact_phone || "",
     host_id: 1, // Mock user ID
     photos: photos || [],
     created_at: new Date().toISOString(),
