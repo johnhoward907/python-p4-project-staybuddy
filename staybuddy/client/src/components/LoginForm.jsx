@@ -64,8 +64,13 @@ const LoginForm = () => {
                 });
 
                 if (!response.ok) {
-                  const errorData = await response.json();
-                  setErrors({ email: errorData.error || "Login failed" });
+                  try {
+                    const errorData = await response.json();
+                    setErrors({ email: errorData.error || "Login failed" });
+                  } catch (parseError) {
+                    console.error("Error parsing response:", parseError);
+                    setErrors({ email: "Login failed. Please try again." });
+                  }
                   return;
                 }
 
