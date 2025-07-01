@@ -44,7 +44,20 @@ function NewStayForm() {
       }
     } catch (error) {
       console.error("Error creating stay:", error);
-      alert("Network error. Please try again.");
+      if (error.message.includes("Failed to fetch")) {
+        alert(
+          "Connection error. Please check if the backend server is running and try again.",
+        );
+      } else if (
+        error.name === "PayloadTooLargeError" ||
+        error.message.includes("too large")
+      ) {
+        alert(
+          "The photos you selected are too large. Please try with smaller images or fewer photos.",
+        );
+      } else {
+        alert("Network error. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
