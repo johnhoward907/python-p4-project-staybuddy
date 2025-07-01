@@ -24,6 +24,18 @@ const stays = [
     price: 150,
     location: "California",
     host_id: 1,
+    photos: [
+      {
+        url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500",
+        type: "url",
+        name: "Beach House Main",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=500",
+        type: "url",
+        name: "Ocean View",
+      },
+    ],
   },
   {
     id: 2,
@@ -32,6 +44,18 @@ const stays = [
     price: 120,
     location: "Colorado",
     host_id: 1,
+    photos: [
+      {
+        url: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500",
+        type: "url",
+        name: "Mountain Cabin",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=500",
+        type: "url",
+        name: "Forest View",
+      },
+    ],
   },
 ];
 
@@ -97,6 +121,33 @@ app.get("/stays/:id", (req, res) => {
   } else {
     res.status(404).json({ error: "Stay not found" });
   }
+});
+
+app.post("/stays", (req, res) => {
+  const { title, description, location, price, photos = [] } = req.body;
+
+  if (!title || !location || !price) {
+    return res
+      .status(400)
+      .json({ error: "Title, location, and price are required" });
+  }
+
+  const newStay = {
+    id: stays.length + 1,
+    title,
+    description: description || "",
+    location,
+    price: parseFloat(price),
+    host_id: 1, // Mock user ID
+    photos: photos || [],
+    created_at: new Date().toISOString(),
+  };
+
+  stays.push(newStay);
+
+  console.log(`New stay created: ${title} with ${photos.length} photos`);
+
+  res.status(201).json(newStay);
 });
 
 // Bookings endpoints
