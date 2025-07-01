@@ -13,6 +13,17 @@ const LoginForm = () => {
       <div className="container">
         <div className="form-container">
           <h2 className="form-title">Welcome Back</h2>
+          <div className="demo-credentials">
+            <p>
+              <strong>🧪 Demo Credentials:</strong>
+            </p>
+            <p>
+              Email: <code>demo@example.com</code>
+            </p>
+            <p>
+              Password: <code>password123</code>
+            </p>
+          </div>
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={Yup.object({
