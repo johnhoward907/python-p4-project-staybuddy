@@ -21,6 +21,20 @@ function App() {
         <Route path="/signup" element={<SignupForm />} />
         <Route path="/book/:stayId" element={<BookingForm />} />
         <Route path="/bookings" element={<MyBookings />} />
+        <Route
+          path="*"
+          element={
+            <div className="main-content">
+              <div className="container text-center">
+                <h1>404 - Page Not Found</h1>
+                <p>The page you're looking for doesn't exist.</p>
+                <a href="/" className="btn btn-primary">
+                  Go Home
+                </a>
+              </div>
+            </div>
+          }
+        />
       </Routes>
     </div>
   );
