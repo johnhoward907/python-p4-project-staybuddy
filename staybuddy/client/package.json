@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start:backend": "cd ../server && python app.py",
+    "start:backend": "cd ../server && python3 app.py",
     "start:dev": "concurrently \"npm run start:backend\" \"npm start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
