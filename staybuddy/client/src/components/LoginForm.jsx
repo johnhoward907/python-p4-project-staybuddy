@@ -1,17 +1,32 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../UserContext.jsx";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useContext(UserContext);
+
+  // Check if we came from the auth prompt
+  const showBackButton =
+    location.state?.from === "auth-prompt" ||
+    !document.referrer.includes("/login");
 
   return (
     <div className="main-content">
       <div className="container">
         <div className="form-container">
+          {showBackButton && (
+            <button
+              onClick={() => navigate("/")}
+              className="back-button"
+              type="button"
+            >
+              ← Back to Welcome
+            </button>
+          )}
           <h2 className="form-title">Welcome Back</h2>
           <div className="demo-credentials">
             <p>
