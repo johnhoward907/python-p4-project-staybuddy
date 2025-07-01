@@ -70,12 +70,19 @@ const SignupForm = () => {
                 });
 
                 if (!response.ok) {
-                  const errorData = await response.json();
-                  setErrors({ email: errorData.error || "Signup failed" });
+                  try {
+                    const errorText = await response.text();
+                    const errorData = JSON.parse(errorText);
+                    setErrors({ email: errorData.error || "Signup failed" });
+                  } catch (parseError) {
+                    console.error("Error parsing response:", parseError);
+                    setErrors({ email: "Signup failed. Please try again." });
+                  }
                   return;
                 }
 
-                const data = await response.json();
+                const responseText = await response.text();
+                const data = JSON.parse(responseText);
                 localStorage.setItem("token", data.token);
                 if (login) login(data.user);
                 navigate("/");
