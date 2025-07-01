@@ -35,28 +35,38 @@ const LoginForm = () => {
                 .required("Password is required"),
             })}
             onSubmit={async (values, { setSubmitting, setErrors }) => {
+              // Prevent duplicate submissions
+              if (setSubmitting) setSubmitting(true);
+
               try {
-                const res = await fetch("/auth/login", {
+                // Clear any previous errors
+                setErrors({});
+
+                const response = await fetch("/auth/login", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(values),
                 });
-                const data = await res.json();
-                if (res.ok) {
-                  localStorage.setItem("token", data.token);
-                  if (login) login(data.user);
-                  navigate("/");
-                } else {
-                  setErrors({ email: data.error || "Login failed" });
+
+                if (!response.ok) {
+                  const errorData = await response.json();
+                  setErrors({ email: errorData.error || "Login failed" });
+                  return;
                 }
+
+                const data = await response.json();
+                localStorage.setItem("token", data.token);
+                if (login) login(data.user);
+                navigate("/");
               } catch (err) {
                 console.error("Network error:", err);
                 setErrors({
                   email:
-                    "Backend server unavailable. Please start the backend server by running: cd staybuddy/server && python3 app.py",
+                    "Network error. Please check your connection and try again.",
                 });
+              } finally {
+                if (setSubmitting) setSubmitting(false);
               }
-              setSubmitting(false);
             }}
           >
             {({ isSubmitting }) => (
