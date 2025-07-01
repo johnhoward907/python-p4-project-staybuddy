@@ -10,6 +10,8 @@ import SignupForm from "./components/SignupForm";
 import BookingForm from "./components/BookingForm";
 import MyBookings from "./components/MyBookings";
 import AuthPrompt from "./components/AuthPrompt";
+import EditStayForm from "./components/EditStayForm";
+import FavoritesList from "./components/FavoritesList";
 import "./App.css";
 
 function App() {
@@ -40,6 +42,8 @@ function App() {
         <Route path="/signup" element={<SignupForm />} />
         <Route path="/book/:stayId" element={<BookingForm />} />
         <Route path="/bookings" element={<MyBookings />} />
+        <Route path="/stays/:id/edit" element={<EditStayForm />} />
+        <Route path="/favorites" element={<FavoritesList />} />
         <Route
           path="*"
           element={
