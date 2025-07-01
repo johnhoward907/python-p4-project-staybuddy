@@ -71,7 +71,8 @@ const SignupForm = () => {
 
                 if (!response.ok) {
                   try {
-                    const errorData = await response.clone().json();
+                    const errorText = await response.text();
+                    const errorData = JSON.parse(errorText);
                     setErrors({ email: errorData.error || "Signup failed" });
                   } catch (parseError) {
                     console.error("Error parsing response:", parseError);
@@ -80,7 +81,8 @@ const SignupForm = () => {
                   return;
                 }
 
-                const data = await response.json();
+                const responseText = await response.text();
+                const data = JSON.parse(responseText);
                 localStorage.setItem("token", data.token);
                 if (login) login(data.user);
                 navigate("/");
