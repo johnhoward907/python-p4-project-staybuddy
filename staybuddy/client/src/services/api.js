@@ -1,10 +1,7 @@
 // client/src/services/api.js
 
 // Environment-aware API base URL
-const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "/api" // Use relative URL in production (will use proxy)
-    : "http://localhost:5000"; // Use localhost in development
+const API_BASE_URL = ""; // Use proxy for all environments
 
 export const getToken = () => localStorage.getItem("token");
 
