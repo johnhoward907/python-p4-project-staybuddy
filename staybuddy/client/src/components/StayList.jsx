@@ -16,8 +16,33 @@ const StayList = () => {
         setError(null);
       } catch (err) {
         console.error("Network error:", err);
+        // Fallback to demo data when backend is unavailable
+        const demoStays = [
+          {
+            id: 1,
+            title: "Cozy Mountain Cabin",
+            location: "Aspen, Colorado",
+            price: 150,
+            description: "Perfect getaway in the mountains",
+          },
+          {
+            id: 2,
+            title: "Modern City Apartment",
+            location: "New York, NY",
+            price: 200,
+            description: "Stylish apartment in the heart of the city",
+          },
+          {
+            id: 3,
+            title: "Beachfront Villa",
+            location: "Malibu, California",
+            price: 350,
+            description: "Luxury villa with ocean views",
+          },
+        ];
+        setStays(demoStays);
         setError(
-          "Unable to load stays. Please check if the backend server is running.",
+          "🚧 Demo Mode: Backend server is not running. Showing sample data. To start the backend server, run: cd staybuddy/server && python app.py",
         );
       } finally {
         setLoading(false);
@@ -53,8 +78,22 @@ const StayList = () => {
               Discover unique accommodations around the world
             </p>
           </div>
-          <div className="error">
-            <strong>Oops!</strong> {error}
+          <div
+            className={error.includes("Demo Mode") ? "demo-notice" : "error"}
+          >
+            {error.includes("Demo Mode") ? (
+              <>
+                <strong>ℹ️ Demo Mode</strong>
+                <br />
+                {error.replace("🚧 Demo Mode: ", "")}
+              </>
+            ) : (
+              <>
+                <strong>⚠️ Connection Error</strong>
+                <br />
+                {error}
+              </>
+            )}
           </div>
         </div>
       </div>
