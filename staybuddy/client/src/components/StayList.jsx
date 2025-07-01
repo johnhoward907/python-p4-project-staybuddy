@@ -21,22 +21,22 @@ const StayList = () => {
           {
             id: 1,
             title: "Cozy Mountain Cabin",
-            location: "Aspen, Colorado",
-            price: 150,
+            location: "Mount Kenya, Nyeri",
+            price: 12000,
             description: "Perfect getaway in the mountains",
           },
           {
             id: 2,
             title: "Modern City Apartment",
-            location: "New York, NY",
-            price: 200,
+            location: "Westlands, Nairobi",
+            price: 18000,
             description: "Stylish apartment in the heart of the city",
           },
           {
             id: 3,
             title: "Beachfront Villa",
-            location: "Malibu, California",
-            price: 350,
+            location: "Diani Beach, Mombasa",
+            price: 25000,
             description: "Luxury villa with ocean views",
           },
         ];
