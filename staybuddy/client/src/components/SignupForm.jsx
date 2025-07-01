@@ -45,7 +45,7 @@ const SignupForm = () => {
                 console.error("Network error:", err);
                 setErrors({
                   email:
-                    "Server unavailable. Please check if the backend server is running.",
+                    "Backend server unavailable. Please start the backend server by running: cd staybuddy/server && python3 app.py",
                 });
               }
               setSubmitting(false);
