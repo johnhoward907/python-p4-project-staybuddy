@@ -84,7 +84,7 @@ app.post("/auth/login", (req, res) => {
 });
 
 app.post("/auth/signup", (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, phone } = req.body;
 
   // Check if user already exists
   if (users.find((u) => u.email === email)) {
@@ -97,13 +97,19 @@ app.post("/auth/signup", (req, res) => {
     username,
     email,
     password,
+    phone,
   };
 
   users.push(newUser);
 
   res.json({
     token: "mock-jwt-token-" + Date.now(),
-    user: { id: newUser.id, username: newUser.username, email: newUser.email },
+    user: {
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+      phone: newUser.phone,
+    },
   });
 });
 
