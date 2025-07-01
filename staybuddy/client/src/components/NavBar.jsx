@@ -21,6 +21,10 @@ function NavBar() {
           🏠 StayBuddy
         </Link>
 
+        {user && (
+          <div className="navbar-welcome">Welcome, {user.username}!</div>
+        )}
+
         <ul className="navbar-nav">
           <li>
             <Link
