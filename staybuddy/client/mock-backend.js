@@ -21,8 +21,8 @@ const stays = [
     id: 1,
     title: "Cozy Beach House",
     description: "A beautiful beach house with ocean views",
-    price: 150,
-    location: "California",
+    price: 15000,
+    location: "Diani Beach, Mombasa",
     host_id: 1,
     photos: [
       {
@@ -41,8 +41,8 @@ const stays = [
     id: 2,
     title: "Mountain Cabin",
     description: "Perfect retreat in the mountains",
-    price: 120,
-    location: "Colorado",
+    price: 12000,
+    location: "Mount Kenya, Nyeri",
     host_id: 1,
     photos: [
       {
