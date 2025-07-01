@@ -65,7 +65,7 @@ const LoginForm = () => {
 
                 if (!response.ok) {
                   try {
-                    const errorData = await response.json();
+                    const errorData = await response.clone().json();
                     setErrors({ email: errorData.error || "Login failed" });
                   } catch (parseError) {
                     console.error("Error parsing response:", parseError);
