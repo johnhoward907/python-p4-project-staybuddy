@@ -1,37 +1,78 @@
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 
 const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
-  const [urlInput, setUrlInput] = useState('');
+  const [urlInput, setUrlInput] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
 
-  const handleFileSelect = (files) => {
+  // Image compression function
+  const compressImage = (file, maxWidth = 800, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+
+      img.onload = () => {
+        // Calculate new dimensions
+        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(resolve, "image/jpeg", quality);
+      };
+
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFileSelect = async (files) => {
     const newPhotos = [...photos];
 
-    Array.from(files).forEach(file => {
-      if (newPhotos.length >= maxPhotos) return;
+    for (const file of Array.from(files)) {
+      if (newPhotos.length >= maxPhotos) break;
 
-      if (file.type.startsWith('image/')) {
-        // Compress image before upload
-        const compressedFile = await compressImage(file);
+      if (file.type.startsWith("image/")) {
+        try {
+          // Compress image before upload
+          const compressedFile = await compressImage(file);
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const newPhoto = {
-            id: Date.now() + Math.random(),
-            url: e.target.result,
-            type: 'file',
-            name: file.name,
-            size: compressedFile.size,
-            originalSize: file.size
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const newPhoto = {
+              id: Date.now() + Math.random(),
+              url: e.target.result,
+              type: "file",
+              name: file.name,
+              size: compressedFile.size,
+              originalSize: file.size,
+            };
+
+            const updatedPhotos = [...newPhotos, newPhoto];
+            onPhotosChange(updatedPhotos.slice(0, maxPhotos));
           };
+          reader.readAsDataURL(compressedFile);
+        } catch (error) {
+          console.error("Error compressing image:", error);
+          // Fallback to original file if compression fails
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const newPhoto = {
+              id: Date.now() + Math.random(),
+              url: e.target.result,
+              type: "file",
+              name: file.name,
+              size: file.size,
+            };
 
-          const updatedPhotos = [...newPhotos, newPhoto];
-          onPhotosChange(updatedPhotos.slice(0, maxPhotos));
-        };
-        reader.readAsDataURL(compressedFile);
+            const updatedPhotos = [...newPhotos, newPhoto];
+            onPhotosChange(updatedPhotos.slice(0, maxPhotos));
+          };
+          reader.readAsDataURL(file);
+        }
       }
-    });
+    }
   };
 
   const handleUrlAdd = (e) => {
@@ -41,12 +82,12 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
     const newPhoto = {
       id: Date.now() + Math.random(),
       url: urlInput.trim(),
-      type: 'url',
-      name: 'Image from URL'
+      type: "url",
+      name: "Image from URL",
     };
 
     onPhotosChange([...photos, newPhoto]);
-    setUrlInput('');
+    setUrlInput("");
   };
 
   const handleDrop = (e) => {
@@ -67,7 +108,7 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
   };
 
   const removePhoto = (photoId) => {
-    onPhotosChange(photos.filter(photo => photo.id !== photoId));
+    onPhotosChange(photos.filter((photo) => photo.id !== photoId));
   };
 
   const movePhoto = (fromIndex, toIndex) => {
@@ -79,7 +120,9 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
 
   return (
     <div className="photo-upload-container">
-      <h3 className="photo-upload-title">Add Photos ({photos.length}/{maxPhotos})</h3>
+      <h3 className="photo-upload-title">
+        Add Photos ({photos.length}/{maxPhotos})
+      </h3>
 
       {/* URL Input */}
       <form onSubmit={handleUrlAdd} className="url-input-form">
@@ -107,11 +150,13 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
 
       {/* File Upload Drop Zone */}
       <div
-        className={`drop-zone ${dragOver ? 'drag-over' : ''} ${photos.length >= maxPhotos ? 'disabled' : ''}`}
+        className={`drop-zone ${dragOver ? "drag-over" : ""} ${photos.length >= maxPhotos ? "disabled" : ""}`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        onClick={() => photos.length < maxPhotos && fileInputRef.current?.click()}
+        onClick={() =>
+          photos.length < maxPhotos && fileInputRef.current?.click()
+        }
       >
         <input
           ref={fileInputRef}
@@ -128,11 +173,10 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
           <p className="drop-zone-text">
             {photos.length >= maxPhotos
               ? `Maximum ${maxPhotos} photos reached`
-              : 'Drop images here or click to browse'
-            }
+              : "Drop images here or click to browse"}
           </p>
           <p className="drop-zone-subtext">
-            {photos.length < maxPhotos && 'Supports JPG, PNG, GIF files'}
+            {photos.length < maxPhotos && "Supports JPG, PNG, GIF files"}
           </p>
         </div>
       </div>
@@ -148,7 +192,8 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
                   alt={photo.name}
                   className="photo-preview"
                   onError={(e) => {
-                    e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150"><rect width="200" height="150" fill="%23f0f0f0"/><text x="100" y="75" text-anchor="middle" fill="%23999">Image not found</text></svg>';
+                    e.target.src =
+                      'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150"><rect width="200" height="150" fill="%23f0f0f0"/><text x="100" y="75" text-anchor="middle" fill="%23999">Image not found</text></svg>';
                   }}
                 />
                 <div className="photo-overlay">
@@ -184,8 +229,12 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
                   </div>
                 </div>
                 <div className="photo-info">
-                  <span className="photo-type-badge">{photo.type === 'url' ? 'URL' : 'FILE'}</span>
-                  {index === 0 && <span className="primary-badge">PRIMARY</span>}
+                  <span className="photo-type-badge">
+                    {photo.type === "url" ? "URL" : "FILE"}
+                  </span>
+                  {index === 0 && (
+                    <span className="primary-badge">PRIMARY</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -194,7 +243,10 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
       )}
 
       {photos.length === 0 && (
-        <p className="no-photos-text">No photos added yet. Add some photos to make your stay more attractive!</p>
+        <p className="no-photos-text">
+          No photos added yet. Add some photos to make your stay more
+          attractive!
+        </p>
       )}
     </div>
   );
