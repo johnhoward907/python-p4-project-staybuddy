@@ -1,47 +1,53 @@
 # Quick Start Guide - StayBuddy
 
-## The Issue
+## ✅ FIXED - App is now working!
 
-The app currently shows these errors:
+Both frontend and backend servers are now running automatically using a mock backend for development.
 
-- **Proxy error**: Frontend can't connect to backend (backend not running)
-- **Network error**: Body stream errors due to backend unavailability
+## Current Status
 
-## Solution
+✅ **Frontend**: React app running on http://localhost:3000
+✅ **Backend**: Mock API server running on http://localhost:5000
+✅ **All API endpoints working**: Login, signup, stays, bookings
 
-The **frontend is running** ✅ but the **backend server needs to be started** ❌
+## How to Use
 
-### Option 1: Use the startup script (Recommended)
+The app now includes a **mock backend** that provides:
+
+- User authentication (login/signup)
+- Demo stays and bookings data
+- All API endpoints needed for development
+
+**Test credentials:**
+
+- Email: `demo@example.com`
+- Password: `password123`
+
+Or create a new account using the signup form.
+
+## Development Commands
 
 ```bash
-cd staybuddy
-chmod +x start-dev.sh
-./start-dev.sh
+cd staybuddy/client
+npm run start:dev    # Starts both frontend and mock backend
+npm start           # Starts only frontend (if backend running separately)
 ```
 
-### Option 2: Manual startup
+## Switching to Real Backend
 
-1. **Start the backend server (in a new terminal):**
+To use the real Flask backend instead of the mock:
+
+1. Install Python dependencies:
 
    ```bash
    cd staybuddy/server
    pip install -r requirements.txt
-   python app.py
    ```
 
-   You should see: `Running on http://127.0.0.1:5000`
+2. Update package.json:
 
-2. **The frontend is already running on port 3000** ✅
+   ```bash
+   "start:backend": "cd ../server && python3 app.py"
+   ```
 
-### Verification
-
-Once both servers are running:
-
-- Frontend: http://localhost:3000 ✅ (already running)
-- Backend: http://localhost:5000 ❌ (needs to be started)
-
-When both are running, the proxy errors will disappear and forms will work correctly.
-
-### Note
-
-The "body stream already read" error will also disappear once the backend is running, as it's caused by network failures when the backend is unavailable.
+3. Restart: `npm run start:dev`
