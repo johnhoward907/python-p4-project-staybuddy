@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { postWithToken } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import PhotoUpload from "./PhotoUpload";
 
