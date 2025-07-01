@@ -385,6 +385,16 @@ app.listen(PORT, () => {
   console.log("  GET /auth/check_session");
   console.log("  GET /stays");
   console.log("  GET /stays/:id");
+  console.log("  POST /stays");
+  console.log("  PATCH /stays/:id");
+  console.log("  DELETE /stays/:id");
   console.log("  POST /bookings");
   console.log("  GET /bookings");
+  console.log("  GET /reviews/stay/:stayId");
+  console.log("  POST /reviews");
+  console.log("  GET /favorites");
+  console.log("  POST /favorites");
+  console.log("  GET /favorites/check/:stayId");
+  console.log("  PATCH /favorites/:favoriteId");
+  console.log("  DELETE /favorites/:favoriteId");
 });
