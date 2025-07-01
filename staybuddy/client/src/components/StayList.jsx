@@ -16,7 +16,7 @@ const StayList = () => {
         setError(null);
       } catch (err) {
         console.error("Network error:", err);
-        // Fallback to demo data when backend is unavailable
+        // Fallback to demo data when backend is unavailable or has errors
         const demoStays = [
           {
             id: 1,
@@ -41,9 +41,17 @@ const StayList = () => {
           },
         ];
         setStays(demoStays);
-        setError(
-          "🚧 Demo Mode: Backend server is not running. Showing sample data. To start the backend server, run: cd staybuddy/server && python app.py",
-        );
+
+        // Check error type and provide appropriate message
+        if (err.message.includes("500")) {
+          setError(
+            "🚧 Demo Mode: Backend server is running but needs database setup. Showing sample data. To fix: cd staybuddy/server && python app.py (ensure database is initialized).",
+          );
+        } else {
+          setError(
+            "🚧 Demo Mode: Backend server connection issue. Showing sample data. To start the backend server, run: cd staybuddy/server && python app.py",
+          );
+        }
       } finally {
         setLoading(false);
       }
