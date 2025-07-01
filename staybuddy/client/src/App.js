@@ -1,15 +1,34 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "./UserContext.jsx";
 import NavBar from "./components/NavBar";
 import StayList from "./components/StayList";
 import StayDetails from "./components/StayDetails";
 import NewStayForm from "./components/NewStayForm";
 import LoginForm from "./components/LoginForm";
 import SignupForm from "./components/SignupForm";
-import BookingForm from "./components/BookingForm"; // to be implemented
-import MyBookings from "./components/MyBookings"; // to be implemented
+import BookingForm from "./components/BookingForm";
+import MyBookings from "./components/MyBookings";
+import AuthPrompt from "./components/AuthPrompt";
 import "./App.css";
 
 function App() {
+  const { user } = useContext(UserContext);
+  const location = useLocation();
+
+  // Show auth prompt for unauthenticated users, except on login/signup pages
+  if (
+    !user &&
+    location.pathname !== "/login" &&
+    location.pathname !== "/signup"
+  ) {
+    return (
+      <div className="app">
+        <AuthPrompt />
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <NavBar />
