@@ -19,42 +19,107 @@ const users = [
 // Mock stays database
 const stays = [
   {
-    id: 1,
-    title: "Cozy Beach House",
-    description: "A beautiful beach house with ocean views",
-    price: 15000,
-    location: "Diani Beach, Mombasa",
+    id: 3,
+    title: "Luxury Urban Apartment",
+    description:
+      "Modern apartment in the heart of the city with premium amenities and stunning contemporary design. Features spacious living areas, high-end furnishings, and breathtaking city views.",
+    price: 18000,
+    location: "Westlands, Nairobi",
     host_id: 1,
     photos: [
       {
-        url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500",
+        url: "https://images.pexels.com/photos/279607/pexels-photo-279607.jpeg",
         type: "url",
-        name: "Beach House Main",
+        name: "Modern Living Room",
       },
       {
-        url: "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=500",
+        url: "https://images.pexels.com/photos/2724749/pexels-photo-2724749.jpeg",
         type: "url",
-        name: "Ocean View",
+        name: "Elegant Kitchen",
       },
     ],
   },
   {
-    id: 2,
-    title: "Mountain Cabin",
-    description: "Perfect retreat in the mountains",
-    price: 12000,
-    location: "Mount Kenya, Nyeri",
+    id: 4,
+    title: "Serene Garden Villa",
+    description:
+      "Peaceful villa surrounded by lush gardens with beautifully designed interiors. Perfect for relaxation with cozy bedrooms, spa-like bathrooms, and warm gathering spaces.",
+    price: 16000,
+    location: "Karen, Nairobi",
     host_id: 1,
     photos: [
       {
-        url: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500",
+        url: "https://images.pexels.com/photos/32795042/pexels-photo-32795042.jpeg",
         type: "url",
-        name: "Mountain Cabin",
+        name: "Cozy Bedroom",
       },
       {
-        url: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=500",
+        url: "https://images.pexels.com/photos/3288104/pexels-photo-3288104.png",
         type: "url",
-        name: "Forest View",
+        name: "Luxury Bathroom",
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: "Elegant Family Home",
+    description:
+      "Spacious family home with charming vintage touches and modern comforts. Features elegant dining areas, comfortable living spaces, and tasteful décor throughout.",
+    price: 14000,
+    location: "Muthaiga, Nairobi",
+    host_id: 1,
+    photos: [
+      {
+        url: "https://images.pexels.com/photos/2317972/pexels-photo-2317972.jpeg",
+        type: "url",
+        name: "Vintage Dining Room",
+      },
+      {
+        url: "https://images.pexels.com/photos/6667210/pexels-photo-6667210.jpeg",
+        type: "url",
+        name: "Cozy Fireplace Area",
+      },
+    ],
+  },
+  {
+    id: 6,
+    title: "Modern Minimalist Retreat",
+    description:
+      "Clean, contemporary design meets comfort in this stunning minimalist home. Features bright open spaces, neutral tones, and carefully curated furnishings for the perfect peaceful getaway.",
+    price: 17000,
+    location: "Runda, Nairobi",
+    host_id: 1,
+    photos: [
+      {
+        url: "https://images.pexels.com/photos/2631746/pexels-photo-2631746.jpeg",
+        type: "url",
+        name: "Minimalist Bedroom",
+      },
+      {
+        url: "https://images.pexels.com/photos/279607/pexels-photo-279607.jpeg",
+        type: "url",
+        name: "Contemporary Living Space",
+      },
+    ],
+  },
+  {
+    id: 7,
+    title: "Stylish Executive Suite",
+    description:
+      "Upscale accommodation perfect for business travelers and discerning guests. Features designer interiors, premium amenities, and sophisticated styling throughout every room.",
+    price: 20000,
+    location: "Kilimani, Nairobi",
+    host_id: 1,
+    photos: [
+      {
+        url: "https://images.pexels.com/photos/2724749/pexels-photo-2724749.jpeg",
+        type: "url",
+        name: "Designer Kitchen",
+      },
+      {
+        url: "https://images.pexels.com/photos/3288104/pexels-photo-3288104.png",
+        type: "url",
+        name: "Executive Bathroom",
       },
     ],
   },
@@ -376,25 +441,72 @@ app.get("/", (req, res) => {
   res.json({ message: "Mock StayBuddy Backend Server Running", status: "ok" });
 });
 
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Mock backend server running on http://localhost:${PORT}`);
-  console.log("Available endpoints:");
-  console.log("  POST /auth/login");
-  console.log("  POST /auth/signup");
-  console.log("  GET /auth/check_session");
-  console.log("  GET /stays");
-  console.log("  GET /stays/:id");
-  console.log("  POST /stays");
-  console.log("  PATCH /stays/:id");
-  console.log("  DELETE /stays/:id");
-  console.log("  POST /bookings");
-  console.log("  GET /bookings");
-  console.log("  GET /reviews/stay/:stayId");
-  console.log("  POST /reviews");
-  console.log("  GET /favorites");
-  console.log("  POST /favorites");
-  console.log("  GET /favorites/check/:stayId");
-  console.log("  PATCH /favorites/:favoriteId");
-  console.log("  DELETE /favorites/:favoriteId");
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+  res.status(500).json({ error: "Internal server error" });
+});
+
+// Handle unhandled rejections
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+});
+
+const PORT = process.env.BACKEND_PORT || 5001;
+
+const server = app
+  .listen(PORT, () => {
+    console.log(`Mock backend server running on http://localhost:${PORT}`);
+    console.log("Available endpoints:");
+    console.log("  POST /auth/login");
+    console.log("  POST /auth/signup");
+    console.log("  GET /auth/check_session");
+    console.log("  GET /stays");
+    console.log("  GET /stays/:id");
+    console.log("  POST /stays");
+    console.log("  PATCH /stays/:id");
+    console.log("  DELETE /stays/:id");
+    console.log("  POST /bookings");
+    console.log("  GET /bookings");
+    console.log("  GET /reviews/stay/:stayId");
+    console.log("  POST /reviews");
+    console.log("  GET /favorites");
+    console.log("  POST /favorites");
+    console.log("  GET /favorites/check/:stayId");
+    console.log("  PATCH /favorites/:favoriteId");
+    console.log("  DELETE /favorites/:favoriteId");
+  })
+  .on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(
+        `Port ${PORT} is already in use. Trying port ${PORT + 1}...`,
+      );
+      server.listen(PORT + 1, () => {
+        console.log(
+          `Mock backend server running on http://localhost:${PORT + 1}`,
+        );
+      });
+    } else {
+      console.error("Server error:", err);
+    }
+  });
+
+// Keep the server running
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received. Shutting down gracefully.");
+  server.close(() => {
+    console.log("Process terminated.");
+  });
+});
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received. Shutting down gracefully.");
+  server.close(() => {
+    console.log("Process terminated.");
+  });
 });
