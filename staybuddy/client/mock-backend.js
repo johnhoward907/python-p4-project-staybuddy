@@ -163,6 +163,49 @@ app.post("/stays", (req, res) => {
   res.status(201).json(newStay);
 });
 
+app.patch("/stays/:id", (req, res) => {
+  const stayId = parseInt(req.params.id);
+  const stay = stays.find((s) => s.id === stayId);
+
+  if (!stay) {
+    return res.status(404).json({ error: "Stay not found" });
+  }
+
+  // In a real app, you'd check if user owns this stay
+  // For mock, we'll allow any update
+
+  const { title, description, location, price, contact_phone, photos } =
+    req.body;
+
+  if (title) stay.title = title;
+  if (description !== undefined) stay.description = description;
+  if (location) stay.location = location;
+  if (price) stay.price = parseFloat(price);
+  if (contact_phone !== undefined) stay.contact_phone = contact_phone;
+  if (photos) stay.photos = photos;
+
+  console.log(`Stay ${stayId} updated: ${stay.title}`);
+
+  res.json(stay);
+});
+
+app.delete("/stays/:id", (req, res) => {
+  const stayId = parseInt(req.params.id);
+  const index = stays.findIndex((s) => s.id === stayId);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Stay not found" });
+  }
+
+  // In a real app, you'd check if user owns this stay
+  // For mock, we'll allow any deletion
+
+  stays.splice(index, 1);
+  console.log(`Stay ${stayId} deleted`);
+
+  res.json({ message: "Stay deleted successfully" });
+});
+
 // Bookings endpoints
 app.post("/bookings", (req, res) => {
   res.json({ id: 1, ...req.body, status: "confirmed" });
