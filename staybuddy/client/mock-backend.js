@@ -63,15 +63,21 @@ const stays = [
 app.post("/auth/login", (req, res) => {
   const { email, password } = req.body;
 
+  console.log(`Login attempt: ${email}`);
+
   // Find user
   const user = users.find((u) => u.email === email);
 
   if (user && user.password === password) {
+    console.log(`Login successful for: ${email}`);
     res.json({
       token: "mock-jwt-token-" + Date.now(),
       user: { id: user.id, username: user.username, email: user.email },
     });
   } else {
+    console.log(
+      `Login failed for: ${email} - ${user ? "Wrong password" : "User not found"}`,
+    );
     res.status(401).json({ error: "Invalid credentials" });
   }
 });
