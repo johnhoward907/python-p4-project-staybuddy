@@ -43,6 +43,14 @@ function NavBar() {
               </li>
               <li>
                 <Link
+                  to="/favorites"
+                  className={`navbar-link ${isActive("/favorites") ? "active" : ""}`}
+                >
+                  ❤️ Favorites
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/host/new"
                   className={`navbar-link ${isActive("/host/new") ? "active" : ""}`}
                 >
