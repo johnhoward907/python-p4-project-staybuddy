@@ -1,53 +1,106 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../UserContext";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const { login } = useContext(UserContext);
 
   return (
-    <Formik
-      initialValues={{ email: "", password: "" }}
-      validationSchema={Yup.object({
-        email: Yup.string().email("Invalid email").required("Required"),
-        password: Yup.string().min(6, "Too short").required("Required"),
-      })}
-      onSubmit={async (values, { setSubmitting, setErrors }) => {
-        try {
-          const res = await fetch("http://localhost:5000/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(values),
-          });
-          const data = await res.json();
-          if (res.ok) {
-            localStorage.setItem("token", data.token);
-            navigate("/");
-          } else {
-            setErrors({ email: data.error });
-          }
-        } catch (err) {
-          console.error("Network error:", err);
-          setErrors({
-            email:
-              "Server unavailable. Please check if the backend server is running on port 5000.",
-          });
-        }
-        setSubmitting(false);
-      }}
-    >
-      <Form>
-        <label>Email</label>
-        <Field name="email" type="email" />
-        <ErrorMessage name="email" component="div" />
+    <div className="main-content">
+      <div className="container">
+        <div className="form-container">
+          <h2 className="form-title">Welcome Back</h2>
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validationSchema={Yup.object({
+              email: Yup.string()
+                .email("Invalid email address")
+                .required("Email is required"),
+              password: Yup.string()
+                .min(6, "Password must be at least 6 characters")
+                .required("Password is required"),
+            })}
+            onSubmit={async (values, { setSubmitting, setErrors }) => {
+              try {
+                const res = await fetch("http://localhost:5000/auth/login", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(values),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                  localStorage.setItem("token", data.token);
+                  if (login) login(data.user);
+                  navigate("/");
+                } else {
+                  setErrors({ email: data.error || "Login failed" });
+                }
+              } catch (err) {
+                console.error("Network error:", err);
+                setErrors({
+                  email:
+                    "Server unavailable. Please check if the backend server is running.",
+                });
+              }
+              setSubmitting(false);
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="email">
+                    Email Address
+                  </label>
+                  <Field
+                    name="email"
+                    type="email"
+                    className="form-input"
+                    placeholder="Enter your email"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="error"
+                  />
+                </div>
 
-        <label>Password</label>
-        <Field name="password" type="password" />
-        <ErrorMessage name="password" component="div" />
+                <div className="form-group">
+                  <label className="form-label" htmlFor="password">
+                    Password
+                  </label>
+                  <Field
+                    name="password"
+                    type="password"
+                    className="form-input"
+                    placeholder="Enter your password"
+                  />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="error"
+                  />
+                </div>
 
-        <button type="submit">Login</button>
-      </Form>
-    </Formik>
+                <button
+                  type="submit"
+                  className="btn btn-primary form-submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Signing in..." : "Sign In"}
+                </button>
+              </Form>
+            )}
+          </Formik>
+
+          <div className="form-link">
+            Don't have an account? <Link to="/signup">Sign up here</Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
