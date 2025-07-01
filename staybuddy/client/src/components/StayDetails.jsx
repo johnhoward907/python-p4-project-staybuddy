@@ -1,12 +1,19 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from "../UserContext.jsx";
+import ReviewForm from "./ReviewForm";
+import ReviewsList from "./ReviewsList";
 
 const StayDetails = () => {
   const { id } = useParams();
+  const { user } = useContext(UserContext);
   const [stay, setStay] = useState(null);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favoriteId, setFavoriteId] = useState(null);
+  const [reviewsKey, setReviewsKey] = useState(0);
 
   useEffect(() => {
     const fetchStay = async () => {
@@ -27,8 +34,27 @@ const StayDetails = () => {
       }
     };
 
+    const checkFavoriteStatus = async () => {
+      if (user) {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`/favorites/check/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setIsFavorited(data.is_favorited);
+            setFavoriteId(data.favorite_id);
+          }
+        } catch (err) {
+          console.error("Error checking favorite status:", err);
+        }
+      }
+    };
+
     fetchStay();
-  }, [id]);
+    checkFavoriteStatus();
+  }, [id, user]);
 
   if (loading) {
     return (
@@ -56,6 +82,57 @@ const StayDetails = () => {
   }
 
   const hasPhotos = stay.photos && stay.photos.length > 0;
+  const isOwner = user && stay && user.id === stay.user_id;
+
+  const toggleFavorite = async () => {
+    if (!user) {
+      alert("Please log in to add favorites");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      if (isFavorited) {
+        // Remove from favorites
+        const response = await fetch(`/favorites/${favoriteId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.ok) {
+          setIsFavorited(false);
+          setFavoriteId(null);
+        }
+      } else {
+        // Add to favorites
+        const response = await fetch("/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            stay_id: parseInt(id),
+            notes: `Added on ${new Date().toLocaleDateString()}`,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsFavorited(true);
+          setFavoriteId(data.id);
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      alert("Failed to update favorites. Please try again.");
+    }
+  };
+
+  const handleReviewSubmitted = () => {
+    setReviewsKey((prev) => prev + 1); // Force refresh of reviews
+  };
 
   return (
     <div className="main-content">
@@ -140,17 +217,52 @@ const StayDetails = () => {
             )}
 
             <div className="stay-actions">
-              <Link
-                to={`/book/${stay.id}`}
-                className="btn btn-primary btn-large"
-              >
-                Book This Stay
-              </Link>
+              {!isOwner && (
+                <Link
+                  to={`/book/${stay.id}`}
+                  className="btn btn-primary btn-large"
+                >
+                  Book This Stay
+                </Link>
+              )}
+
+              {isOwner && (
+                <Link
+                  to={`/stays/${stay.id}/edit`}
+                  className="btn btn-primary btn-large"
+                >
+                  Edit Your Stay
+                </Link>
+              )}
+
+              {user && !isOwner && (
+                <button
+                  onClick={toggleFavorite}
+                  className={`btn btn-secondary ${isFavorited ? "favorited" : ""}`}
+                >
+                  {isFavorited ? "❤️ Favorited" : "🤍 Add to Favorites"}
+                </button>
+              )}
+
               <Link to="/" className="btn btn-secondary">
                 Back to Stays
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="reviews-container">
+          <ReviewsList key={reviewsKey} stayId={id} />
+
+          {user && !isOwner && (
+            <div className="review-form-section">
+              <ReviewForm
+                stayId={parseInt(id)}
+                onReviewSubmitted={handleReviewSubmitted}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
