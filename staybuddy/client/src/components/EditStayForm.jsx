@@ -62,7 +62,7 @@ const EditStayForm = () => {
         if (stayData.photos) {
           setPhotos(
             stayData.photos.map((photo, index) => ({
-              id: index,
+              id: `edit-photo-${Date.now()}-${index}-${Math.random()}`,
               url: photo.url,
               type: photo.type || "url",
               name: photo.name || `Photo ${index + 1}`,
