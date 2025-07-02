@@ -194,9 +194,18 @@ const FavoritesList = () => {
                             "Notes cannot exceed 200 characters",
                           ),
                         })}
-                        onSubmit={(values) =>
-                          updateNotes(favorite.id, values.notes)
-                        }
+                        onSubmit={async (
+                          values,
+                          { setSubmitting, isSubmitting },
+                        ) => {
+                          if (isSubmitting) return;
+                          setSubmitting(true);
+                          try {
+                            await updateNotes(favorite.id, values.notes);
+                          } finally {
+                            setSubmitting(false);
+                          }
+                        }}
                       >
                         {({ values }) => (
                           <Form className="notes-form">
