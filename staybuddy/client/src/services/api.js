@@ -4,6 +4,9 @@
 // Environment-aware API base URL
 const API_BASE_URL = ""; // Use proxy for all environments
 
+// Request deduplication cache
+const pendingRequests = new Map();
+
 export const getToken = () => localStorage.getItem("token");
 
 export const apiCall = async (endpoint, options = {}) => {
@@ -28,14 +31,33 @@ export const apiCall = async (endpoint, options = {}) => {
     },
   };
 
-  const response = await fetch(url, finalOptions);
-  const data = await response.json();
+  // Create a unique key for request deduplication
+  const requestKey = `${finalOptions.method || "GET"}_${url}_${JSON.stringify(finalOptions.body || {})}`;
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  // Check if the same request is already pending
+  if (pendingRequests.has(requestKey)) {
+    return pendingRequests.get(requestKey);
   }
 
-  return data;
+  // Create and cache the request promise
+  const requestPromise = (async () => {
+    try {
+      const response = await fetch(url, finalOptions);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return data;
+    } finally {
+      // Remove from cache when completed
+      pendingRequests.delete(requestKey);
+    }
+  })();
+
+  pendingRequests.set(requestKey, requestPromise);
+  return requestPromise;
 };
 
 export const postWithToken = async (url, data) => {
