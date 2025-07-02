@@ -53,8 +53,9 @@ const EditStayForm = () => {
         },
       });
 
+      const stayData = await response.json();
+
       if (response.ok) {
-        const stayData = await response.json();
         setStay(stayData);
 
         // Convert photos to the format expected by PhotoUpload

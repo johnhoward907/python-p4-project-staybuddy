@@ -19,9 +19,9 @@ const ReviewsList = ({ stayId, onReviewAdded }) => {
     try {
       setLoading(true);
       const response = await fetch(`/reviews/stay/${stayId}`);
+      const data = await response.json();
 
       if (response.ok) {
-        const data = await response.json();
         setReviews(data);
       } else {
         throw new Error("Failed to fetch reviews");
