@@ -49,9 +49,13 @@ const LoginForm = () => {
                 .min(6, "Password must be at least 6 characters")
                 .required("Password is required"),
             })}
-            onSubmit={async (values, { setSubmitting, setErrors }) => {
+            onSubmit={async (
+              values,
+              { setSubmitting, setErrors, isSubmitting },
+            ) => {
               // Prevent duplicate submissions
-              if (setSubmitting) setSubmitting(true);
+              if (isSubmitting) return;
+              setSubmitting(true);
 
               try {
                 // Clear any previous errors
@@ -80,7 +84,7 @@ const LoginForm = () => {
                     "Network error. Please check your connection and try again.",
                 });
               } finally {
-                if (setSubmitting) setSubmitting(false);
+                setSubmitting(false);
               }
             }}
           >
