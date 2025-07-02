@@ -20,8 +20,8 @@ const StayDetails = () => {
       try {
         setLoading(true);
         const response = await fetch(`/stays/${id}`);
+        const data = await response.json();
         if (response.ok) {
-          const data = await response.json();
           setStay(data);
         } else {
           setError("Stay not found");
@@ -41,8 +41,8 @@ const StayDetails = () => {
           const response = await fetch(`/favorites/check/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          const data = await response.json();
           if (response.ok) {
-            const data = await response.json();
             setIsFavorited(data.is_favorited);
             setFavoriteId(data.favorite_id);
           }
