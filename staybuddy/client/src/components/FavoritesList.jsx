@@ -40,7 +40,7 @@ const FavoritesList = () => {
   const removeFavorite = async (favoriteId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/favorites/${favoriteId}`, {
+      const response = await fetch(`http://192.168.0.25:5001/favorites/${favoriteId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

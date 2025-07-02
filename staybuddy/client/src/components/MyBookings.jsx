@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getToken } from "../services/api";
+import { apiCall } from "../services/api";
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -12,17 +12,7 @@ const MyBookings = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("http://127.0.0.1:5000/bookings", {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await apiCall("/bookings");
         setBookings(data || []);
       } catch (err) {
         console.error("Error fetching bookings:", err);
