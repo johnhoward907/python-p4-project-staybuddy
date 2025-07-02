@@ -118,8 +118,9 @@ const StayDetails = () => {
           }),
         });
 
+        const data = await response.json();
+
         if (response.ok) {
-          const data = await response.json();
           setIsFavorited(true);
           setFavoriteId(data.id);
         }
