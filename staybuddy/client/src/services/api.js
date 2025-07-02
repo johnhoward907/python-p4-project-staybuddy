@@ -1,4 +1,5 @@
 // client/src/services/api.js
+// Fixed: body stream already read error
 
 // Environment-aware API base URL
 const API_BASE_URL = ""; // Use proxy for all environments
