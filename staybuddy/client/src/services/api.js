@@ -43,7 +43,22 @@ export const apiCall = async (endpoint, options = {}) => {
   const requestPromise = (async () => {
     try {
       const response = await fetch(url, finalOptions);
-      const data = await response.json();
+
+      // Clone the response to make it safely readable multiple times
+      const responseClone = response.clone();
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // If JSON parsing fails, try with the clone
+        try {
+          data = await responseClone.json();
+        } catch (cloneError) {
+          // If both fail, return empty object or throw error
+          data = {};
+        }
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
