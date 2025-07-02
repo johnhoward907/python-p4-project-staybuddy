@@ -28,12 +28,13 @@ export const apiCall = async (endpoint, options = {}) => {
   };
 
   const response = await fetch(url, finalOptions);
+  const data = await response.json();
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  return response.json();
+  return data;
 };
 
 export const postWithToken = async (url, data) => {
