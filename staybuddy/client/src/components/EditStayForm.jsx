@@ -150,13 +150,21 @@ const EditStayForm = () => {
         },
       });
 
+      // For DELETE requests, we may not always have a response body
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (e) {
+        // No response body or invalid JSON, that's ok for DELETE
+      }
+
       if (response.ok) {
         alert("Stay deleted successfully!");
         navigate("/");
       } else if (response.status === 403) {
         alert("You are not authorized to delete this stay");
       } else {
-        alert("Failed to delete stay");
+        alert(data?.error || "Failed to delete stay");
       }
     } catch (error) {
       console.error("Error deleting stay:", error);
