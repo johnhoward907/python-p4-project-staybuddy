@@ -110,11 +110,12 @@ const EditStayForm = () => {
         body: JSON.stringify(updateData),
       });
 
+      const errorData = await response.json();
+
       if (response.ok) {
         alert("Stay updated successfully!");
         navigate(`/stays/${id}`);
       } else {
-        const errorData = await response.json();
         if (response.status === 403) {
           alert("You are not authorized to edit this stay");
           navigate("/");
