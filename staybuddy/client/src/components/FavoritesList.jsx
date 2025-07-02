@@ -70,8 +70,9 @@ const FavoritesList = () => {
         body: JSON.stringify({ notes }),
       });
 
+      const updatedFavorite = await response.json();
+
       if (response.ok) {
-        const updatedFavorite = await response.json();
         setFavorites(
           favorites.map((fav) =>
             fav.id === favoriteId
