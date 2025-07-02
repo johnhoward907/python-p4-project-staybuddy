@@ -38,15 +38,15 @@ const ReviewForm = ({ stayId, onReviewSubmitted, existingReview }) => {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const newReview = await response.json();
         resetForm();
         if (onReviewSubmitted) {
-          onReviewSubmitted(newReview);
+          onReviewSubmitted(data);
         }
       } else {
-        const errorData = await response.json();
-        setErrors({ comment: errorData.error || "Failed to submit review" });
+        setErrors({ comment: data.error || "Failed to submit review" });
       }
     } catch (error) {
       console.error("Error submitting review:", error);

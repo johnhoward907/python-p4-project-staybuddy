@@ -24,10 +24,12 @@ const BookingForm = () => {
             },
             body: JSON.stringify({ ...values, stay_id: stayId }),
           });
+
+          const data = await res.json();
+
           if (res.ok) {
             navigate("/bookings");
           } else {
-            const data = await res.json();
             setErrors({ start_date: data.error || "Booking failed" });
           }
         } catch (err) {
