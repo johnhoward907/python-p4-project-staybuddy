@@ -49,9 +49,13 @@ const LoginForm = () => {
                 .min(6, "Password must be at least 6 characters")
                 .required("Password is required"),
             })}
-            onSubmit={async (values, { setSubmitting, setErrors }) => {
+            onSubmit={async (
+              values,
+              { setSubmitting, setErrors, isSubmitting },
+            ) => {
               // Prevent duplicate submissions
-              if (setSubmitting) setSubmitting(true);
+              if (isSubmitting) return;
+              setSubmitting(true);
 
               try {
                 // Clear any previous errors
@@ -63,20 +67,13 @@ const LoginForm = () => {
                   body: JSON.stringify(values),
                 });
 
+                const data = await response.json();
+
                 if (!response.ok) {
-                  try {
-                    const errorText = await response.text();
-                    const errorData = JSON.parse(errorText);
-                    setErrors({ email: errorData.error || "Login failed" });
-                  } catch (parseError) {
-                    console.error("Error parsing response:", parseError);
-                    setErrors({ email: "Login failed. Please try again." });
-                  }
+                  setErrors({ email: data.error || "Login failed" });
                   return;
                 }
 
-                const responseText = await response.text();
-                const data = JSON.parse(responseText);
                 localStorage.setItem("token", data.token);
                 if (login) login(data.user);
                 navigate("/");
@@ -87,7 +84,7 @@ const LoginForm = () => {
                     "Network error. Please check your connection and try again.",
                 });
               } finally {
-                if (setSubmitting) setSubmitting(false);
+                setSubmitting(false);
               }
             }}
           >

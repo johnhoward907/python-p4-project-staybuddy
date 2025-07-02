@@ -20,8 +20,13 @@ const ReviewForm = ({ stayId, onReviewSubmitted, existingReview }) => {
       .required("Comment is required"),
   });
 
-  const handleSubmit = async (values, { setErrors, resetForm }) => {
+  const handleSubmit = async (
+    values,
+    { setErrors, resetForm, setSubmitting, isSubmitting },
+  ) => {
+    if (isSubmitting || loading) return;
     setLoading(true);
+    setSubmitting(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -38,21 +43,22 @@ const ReviewForm = ({ stayId, onReviewSubmitted, existingReview }) => {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const newReview = await response.json();
         resetForm();
         if (onReviewSubmitted) {
-          onReviewSubmitted(newReview);
+          onReviewSubmitted(data);
         }
       } else {
-        const errorData = await response.json();
-        setErrors({ comment: errorData.error || "Failed to submit review" });
+        setErrors({ comment: data.error || "Failed to submit review" });
       }
     } catch (error) {
       console.error("Error submitting review:", error);
       setErrors({ comment: "Network error. Please try again." });
     } finally {
       setLoading(false);
+      setSubmitting(false);
     }
   };
 

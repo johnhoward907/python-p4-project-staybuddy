@@ -49,15 +49,16 @@ const EditStayForm = () => {
         },
       });
 
+      const stayData = await response.json();
+
       if (response.ok) {
-        const stayData = await response.json();
         setStay(stayData);
 
         // Convert photos to the format expected by PhotoUpload
         if (stayData.photos) {
           setPhotos(
             stayData.photos.map((photo, index) => ({
-              id: index,
+              id: `edit-photo-${Date.now()}-${index}-${Math.random()}`,
               url: photo.url,
               type: photo.type || "url",
               name: photo.name || `Photo ${index + 1}`,
@@ -83,8 +84,13 @@ const EditStayForm = () => {
     fetchStay();
   }, [fetchStay]);
 
-  const handleSubmit = async (values, { setErrors }) => {
+  const handleSubmit = async (
+    values,
+    { setErrors, setSubmitting: formikSetSubmitting, isSubmitting },
+  ) => {
+    if (isSubmitting || submitting) return;
     setSubmitting(true);
+    formikSetSubmitting(true);
 
     try {
       const updateData = {
@@ -110,11 +116,12 @@ const EditStayForm = () => {
         body: JSON.stringify(updateData),
       });
 
+      const errorData = await response.json();
+
       if (response.ok) {
         alert("Stay updated successfully!");
         navigate(`/stays/${id}`);
       } else {
-        const errorData = await response.json();
         if (response.status === 403) {
           alert("You are not authorized to edit this stay");
           navigate("/");
@@ -127,6 +134,7 @@ const EditStayForm = () => {
       setErrors({ title: "Network error. Please try again." });
     } finally {
       setSubmitting(false);
+      formikSetSubmitting(false);
     }
   };
 
@@ -148,13 +156,21 @@ const EditStayForm = () => {
         },
       });
 
+      // For DELETE requests, we may not always have a response body
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (e) {
+        // No response body or invalid JSON, that's ok for DELETE
+      }
+
       if (response.ok) {
         alert("Stay deleted successfully!");
         navigate("/");
       } else if (response.status === 403) {
         alert("You are not authorized to delete this stay");
       } else {
-        alert("Failed to delete stay");
+        alert(data?.error || "Failed to delete stay");
       }
     } catch (error) {
       console.error("Error deleting stay:", error);

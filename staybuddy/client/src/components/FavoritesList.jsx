@@ -23,8 +23,9 @@ const FavoritesList = () => {
         },
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
         setFavorites(data);
       } else {
         throw new Error("Failed to fetch favorites");
@@ -47,10 +48,18 @@ const FavoritesList = () => {
         },
       });
 
+      // For DELETE requests, we may not always have a response body
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (e) {
+        // No response body or invalid JSON, that's ok for DELETE
+      }
+
       if (response.ok) {
         setFavorites(favorites.filter((fav) => fav.id !== favoriteId));
       } else {
-        alert("Failed to remove favorite");
+        alert(data?.error || "Failed to remove favorite");
       }
     } catch (error) {
       console.error("Error removing favorite:", error);
@@ -70,8 +79,9 @@ const FavoritesList = () => {
         body: JSON.stringify({ notes }),
       });
 
+      const updatedFavorite = await response.json();
+
       if (response.ok) {
-        const updatedFavorite = await response.json();
         setFavorites(
           favorites.map((fav) =>
             fav.id === favoriteId
@@ -184,9 +194,18 @@ const FavoritesList = () => {
                             "Notes cannot exceed 200 characters",
                           ),
                         })}
-                        onSubmit={(values) =>
-                          updateNotes(favorite.id, values.notes)
-                        }
+                        onSubmit={async (
+                          values,
+                          { setSubmitting, isSubmitting },
+                        ) => {
+                          if (isSubmitting) return;
+                          setSubmitting(true);
+                          try {
+                            await updateNotes(favorite.id, values.notes);
+                          } finally {
+                            setSubmitting(false);
+                          }
+                        }}
                       >
                         {({ values }) => (
                           <Form className="notes-form">

@@ -14,7 +14,11 @@ const BookingForm = () => {
         start_date: Yup.string().required("Start date is required"),
         end_date: Yup.string().required("End date is required"),
       })}
-      onSubmit={async (values, { setSubmitting, setErrors }) => {
+      onSubmit={async (values, { setSubmitting, setErrors, isSubmitting }) => {
+        // Prevent duplicate submissions
+        if (isSubmitting) return;
+        setSubmitting(true);
+
         try {
           const res = await fetch("/bookings", {
             method: "POST",
@@ -24,10 +28,12 @@ const BookingForm = () => {
             },
             body: JSON.stringify({ ...values, stay_id: stayId }),
           });
+
+          const data = await res.json();
+
           if (res.ok) {
             navigate("/bookings");
           } else {
-            const data = await res.json();
             setErrors({ start_date: data.error || "Booking failed" });
           }
         } catch (err) {
@@ -36,8 +42,9 @@ const BookingForm = () => {
             start_date:
               "Server unavailable. Please check if the backend server is running on port 5000.",
           });
+        } finally {
+          setSubmitting(false);
         }
-        setSubmitting(false);
       }}
     >
       <Form>

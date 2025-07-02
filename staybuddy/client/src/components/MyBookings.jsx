@@ -1,125 +1,68 @@
-import { useEffect, useState } from "react";
-import { apiCall } from "../services/api";
+import { useParams, useNavigate } from "react-router-dom";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { getToken } from "../services/api";
 
-const MyBookings = () => {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const data = await apiCall("/bookings");
-        setBookings(data || []);
-      } catch (err) {
-        console.error("Error fetching bookings:", err);
-        setError("Unable to load bookings. Please try again later.");
-        setBookings([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookings();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="main-content">
-        <div className="container">
-          <h2 className="page-title">My Bookings</h2>
-          <div className="text-center">
-            <div style={{ fontSize: "2rem", marginBottom: "16px" }}>📅</div>
-            <p>Loading your bookings...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="main-content">
-        <div className="container">
-          <h2 className="page-title">My Bookings</h2>
-          <div className="error-message">
-            <p>{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="btn btn-primary"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+const BookingForm = () => {
+  const { stayId } = useParams();
+  const navigate = useNavigate();
 
   return (
-    <div className="main-content">
-      <div className="container">
-        <h2 className="page-title">My Bookings</h2>
+    <Formik
+      initialValues={{ start_date: "", end_date: "", note: "" }}
+      validationSchema={Yup.object({
+        start_date: Yup.string().required("Start date is required"),
+        end_date: Yup.string().required("End date is required"),
+      })}
+      onSubmit={async (values, { setSubmitting, setErrors, isSubmitting }) => {
+        // Prevent duplicate submissions
+        if (isSubmitting) return;
+        setSubmitting(true);
 
-        {bookings.length === 0 ? (
-          <div className="text-center">
-            <div style={{ fontSize: "4rem", marginBottom: "24px" }}>📅</div>
-            <h3>No bookings yet</h3>
-            <p
-              style={{
-                color: "rgba(255, 255, 255, 0.8)",
-                marginBottom: "32px",
-              }}
-            >
-              Start exploring amazing places to book your next stay!
-            </p>
-            <a href="/" className="btn btn-primary">
-              Browse Stays
-            </a>
-          </div>
-        ) : (
-          <div className="bookings-grid">
-            {bookings.map((booking) => (
-              <div key={booking.id} className="booking-card">
-                <div className="booking-header">
-                  <h3>Booking #{booking.id}</h3>
-                  <span className={`booking-status ${booking.status}`}>
-                    {booking.status || "confirmed"}
-                  </span>
-                </div>
+        try {
+          const res = await fetch("/bookings", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify({ ...values, stay_id: stayId }),
+          });
 
-                <div className="booking-details">
-                  <div className="booking-info">
-                    <strong>Stay ID:</strong> {booking.stay_id}
-                  </div>
+          const data = await res.json();
 
-                  {booking.check_in && booking.check_out && (
-                    <div className="booking-dates">
-                      <div className="booking-info">
-                        <strong>Check-in:</strong> {booking.check_in}
-                      </div>
-                      <div className="booking-info">
-                        <strong>Check-out:</strong> {booking.check_out}
-                      </div>
-                    </div>
-                  )}
+          if (res.ok) {
+            navigate("/bookings");
+          } else {
+            setErrors({ start_date: data.error || "Booking failed" });
+          }
+        } catch (err) {
+          console.error("Network error:", err);
+          setErrors({
+            start_date:
+              "Server unavailable. Please check if the backend server is running on port 5000.",
+          });
+        } finally {
+          setSubmitting(false);
+        }
+      }}
+    >
+      <Form>
+        <label>Start Date</label>
+        <Field name="start_date" type="date" />
+        <ErrorMessage name="start_date" component="div" />
 
-                  {booking.note && (
-                    <div className="booking-note">
-                      <strong>Note:</strong> {booking.note}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+        <label>End Date</label>
+        <Field name="end_date" type="date" />
+        <ErrorMessage name="end_date" component="div" />
+
+        <label>Note (optional)</label>
+        <Field name="note" as="textarea" />
+
+        <button type="submit">Book Stay</button>
+      </Form>
+    </Formik>
   );
 };
 
-export default MyBookings;
+export default BookingForm;

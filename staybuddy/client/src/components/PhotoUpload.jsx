@@ -41,7 +41,7 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
           const reader = new FileReader();
           reader.onload = (e) => {
             const newPhoto = {
-              id: Date.now() + Math.random(),
+              id: `file-${Date.now()}-${Math.random()}-${file.name}`,
               url: e.target.result,
               type: "file",
               name: file.name,
@@ -59,7 +59,7 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
           const reader = new FileReader();
           reader.onload = (e) => {
             const newPhoto = {
-              id: Date.now() + Math.random(),
+              id: `file-fallback-${Date.now()}-${Math.random()}-${file.name}`,
               url: e.target.result,
               type: "file",
               name: file.name,
@@ -79,7 +79,7 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
     if (!urlInput.trim() || photos.length >= maxPhotos) return;
 
     const newPhoto = {
-      id: Date.now() + Math.random(),
+      id: `url-${Date.now()}-${Math.random()}-${urlInput.slice(-10)}`,
       url: urlInput.trim(),
       type: "url",
       name: "Image from URL",

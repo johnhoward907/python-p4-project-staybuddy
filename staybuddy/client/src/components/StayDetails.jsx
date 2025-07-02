@@ -20,8 +20,8 @@ const StayDetails = () => {
       try {
         setLoading(true);
         const response = await fetch(`/stays/${id}`);
+        const data = await response.json();
         if (response.ok) {
-          const data = await response.json();
           setStay(data);
         } else {
           setError("Stay not found");
@@ -41,8 +41,8 @@ const StayDetails = () => {
           const response = await fetch(`/favorites/check/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          const data = await response.json();
           if (response.ok) {
-            const data = await response.json();
             setIsFavorited(data.is_favorited);
             setFavoriteId(data.favorite_id);
           }
@@ -100,6 +100,14 @@ const StayDetails = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        // For DELETE requests, we may not always have a response body
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (e) {
+          // No response body or invalid JSON, that's ok for DELETE
+        }
+
         if (response.ok) {
           setIsFavorited(false);
           setFavoriteId(null);
@@ -118,8 +126,9 @@ const StayDetails = () => {
           }),
         });
 
+        const data = await response.json();
+
         if (response.ok) {
-          const data = await response.json();
           setIsFavorited(true);
           setFavoriteId(data.id);
         }
