@@ -20,8 +20,13 @@ const ReviewForm = ({ stayId, onReviewSubmitted, existingReview }) => {
       .required("Comment is required"),
   });
 
-  const handleSubmit = async (values, { setErrors, resetForm }) => {
+  const handleSubmit = async (
+    values,
+    { setErrors, resetForm, setSubmitting, isSubmitting },
+  ) => {
+    if (isSubmitting || loading) return;
     setLoading(true);
+    setSubmitting(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -53,6 +58,7 @@ const ReviewForm = ({ stayId, onReviewSubmitted, existingReview }) => {
       setErrors({ comment: "Network error. Please try again." });
     } finally {
       setLoading(false);
+      setSubmitting(false);
     }
   };
 
