@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -40,11 +40,7 @@ const EditStayForm = () => {
       .required("Contact phone is required"),
   });
 
-  useEffect(() => {
-    fetchStay();
-  }, [id]);
-
-  const fetchStay = async () => {
+  const fetchStay = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`/stays/${id}`, {
@@ -82,7 +78,11 @@ const EditStayForm = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchStay();
+  }, [fetchStay]);
 
   const handleSubmit = async (
     values,

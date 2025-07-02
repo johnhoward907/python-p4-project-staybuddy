@@ -1,21 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const ReviewsList = ({ stayId, onReviewAdded }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchReviews();
-  }, [stayId]);
-
-  useEffect(() => {
-    if (onReviewAdded) {
-      fetchReviews(); // Refresh reviews when a new one is added
-    }
-  }, [onReviewAdded]);
-
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/reviews/stay/${stayId}`);
@@ -32,7 +22,17 @@ const ReviewsList = ({ stayId, onReviewAdded }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [stayId]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+
+  useEffect(() => {
+    if (onReviewAdded) {
+      fetchReviews(); // Refresh reviews when a new one is added
+    }
+  }, [onReviewAdded, fetchReviews]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
