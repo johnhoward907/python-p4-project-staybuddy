@@ -100,6 +100,14 @@ const StayDetails = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        // For DELETE requests, we may not always have a response body
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (e) {
+          // No response body or invalid JSON, that's ok for DELETE
+        }
+
         if (response.ok) {
           setIsFavorited(false);
           setFavoriteId(null);
