@@ -23,7 +23,7 @@
     "express": "^5.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3000 react-scripts start",
     "start:backend": "node mock-backend.js",
     "start:dev": "concurrently \"npm run start:backend\" \"npm start\"",
     "build": "react-scripts build",

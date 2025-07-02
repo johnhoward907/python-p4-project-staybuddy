@@ -33,7 +33,7 @@ const PhotoUpload = ({ photos, onPhotosChange, maxPhotos = 10 }) => {
     for (const file of Array.from(files)) {
       if (newPhotos.length >= maxPhotos) break;
 
-      if (file.type.startsWith("image/")) {
+      if (file.type.startsWith("http://127.0.0.1:5000/image/")) {
         try {
           // Compress image before upload
           const compressedFile = await compressImage(file);

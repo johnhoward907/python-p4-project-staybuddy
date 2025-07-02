@@ -12,7 +12,7 @@ const LoginForm = () => {
   // Check if we came from the auth prompt
   const showBackButton =
     location.state?.from === "auth-prompt" ||
-    !document.referrer.includes("/login");
+    !document.referrer.includes("/auth/login");
 
   return (
     <div className="main-content">
@@ -57,7 +57,7 @@ const LoginForm = () => {
                 // Clear any previous errors
                 setErrors({});
 
-                const response = await fetch("/auth/login", {
+                const response = await fetch("http://127.0.0.1:5000/auth/login", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(values),

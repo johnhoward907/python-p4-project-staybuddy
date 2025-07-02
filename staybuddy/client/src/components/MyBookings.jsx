@@ -12,7 +12,7 @@ const MyBookings = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/bookings", {
+        const response = await fetch("http://127.0.0.1:5000/bookings", {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
