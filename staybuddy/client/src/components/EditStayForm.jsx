@@ -84,8 +84,13 @@ const EditStayForm = () => {
     }
   };
 
-  const handleSubmit = async (values, { setErrors }) => {
+  const handleSubmit = async (
+    values,
+    { setErrors, setSubmitting: formikSetSubmitting, isSubmitting },
+  ) => {
+    if (isSubmitting || submitting) return;
     setSubmitting(true);
+    formikSetSubmitting(true);
 
     try {
       const updateData = {
@@ -129,6 +134,7 @@ const EditStayForm = () => {
       setErrors({ title: "Network error. Please try again." });
     } finally {
       setSubmitting(false);
+      formikSetSubmitting(false);
     }
   };
 
